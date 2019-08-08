@@ -1,9 +1,16 @@
+<!--
+ * @Author: Tiger Zhang
+ * @LastEditors: Tiger Zhang
+ * @Date: 2019-08-08 19:06:15
+ * @LastEditTime: 2019-08-08 21:07:19
+ * @Description: 
+ -->
 <template>
   <div id="app">
     <h1>批量打开Google 高级搜索指令页面</h1>
     <AddDomain />
     <DomainList />
-    <Pagination allDomainList="allDomainList" />
+    <Pagination />
   </div>
 </template>
 
@@ -18,40 +25,37 @@ export default {
     AddDomain,
     DomainList,
     Pagination
-  },
-  data() {
-    return {
-      allDomainList: []
-    };
   }
 };
 </script>
-<style lang="stylus">
+<style>
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-ul, li {
+ul,
+li {
   list-style-type: none;
 }
 
 body {
-  font-family: 'Microsoft Yahei', sans-serif;
+  font-family: "Microsoft Yahei", sans-serif;
   font-size: 14px;
   background-color: #f2f2f5;
 }
 
-input[type=text] {
+input[type="text"] {
   outline: none;
 }
 
-input[type=checkbox] {
+input[type="checkbox"] {
   transform: translateY(2px);
 }
 
-.btn, textarea {
+.btn,
+textarea {
   outline: none;
 }
 

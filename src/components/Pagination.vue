@@ -1,33 +1,70 @@
+<!--
+ * @Author: Tiger Zhang
+ * @LastEditors: Tiger Zhang
+ * @Date: 2019-08-08 19:06:15
+ * @LastEditTime: 2019-08-08 22:44:58
+ * @Description: 
+ -->
 <template>
-  <section class="pagination" v-if="allDomainList.length > 0">
-    <a @click="currentPage-=1" href="javascript:void(0)" v-show="currentPage>1">上一页</a>
-    <a href="javascript:void(0);" v-show="!showPages.includes(1)" @click="currentPage=1">首页</a>
+  <section class="pagination" v-if="allDomainList.length > 0" @click="changePage($event)">
+    <a :data-page="prevPage" href="javascript:void(0)" v-show="currentPage>1">上一页</a>
+    <a href="javascript:void(0);" v-show="!showPages.includes(1)" data-page="1">首页</a>
     <a
       href="javascript:void(0);"
       :class="{'current-page':page===currentPage}"
-      @click="currentPage=page"
-      v-for="(page,index) in showPages"
-      :key="index"
+      v-for="page in showPages"
+      :data-page="page"
+      :key="page"
     >{{page}}</a>
-    <a
-      href="javascript:void(0);"
-      v-show="!showPages.includes(totalPage)"
-      @click="currentPage=totalPage"
-    >尾页</a>
-    <a @click="currentPage+=1" href="javascript:void(0)" v-show="currentPage < totalPage">下一页</a>
+    <a href="javascript:void(0);" v-show="!showPages.includes(totalPage)" :data-page="totalPage">尾页</a>
+    <a :data-page="nextPage" href="javascript:void(0)" v-show="currentPage < totalPage">下一页</a>
   </section>
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   data() {
     return {
       currentPage: 1,
-      perPage: 20, //默认情况下每页展示20条，可以自己修改
-      minDisplayPages: 11
+      perPage: 3, //默认情况下每页展示20条，可以自己修改
+      minDisplayPages: 5
     };
   },
+  methods: {
+    getCurrentPageDomains() {
+      if (this.allDomainList.length === 0) return;
+      let startIndex = (this.currentPage - 1) * this.perPage;
+      let tmpArr = [];
+      if (this.currentPage === this.totalPage) {
+        tmpArr = this.allDomainList.slice(startIndex);
+      } else {
+        tmpArr = this.allDomainList.slice(
+          startIndex,
+          this.currentPage * this.perPage
+        );
+      }
+      this.$store.dispatch("updateCurrentPageDomains", tmpArr);
+    },
+    changePage(e) {
+      if (e.target.tagName.toLowerCase() !== "a") return;
+      this.currentPage = e.target.dataset.page * 1;
+      this.getCurrentPageDomains();
+    }
+  },
+  mounted() {
+    this.getCurrentPageDomains();
+  },
   computed: {
+    ...mapState(["allDomainList"]),
+    prevPage() {
+      let prevPage = this.currentPage * 1 - 1;
+      return prevPage === 0 ? this.totalPage : prevPage;
+    },
+    nextPage() {
+      let nextPage = this.currentPage * 1 + 1;
+      return nextPage === this.totalPage + 1 ? 1 : nextPage;
+    },
     totalPage() {
       return Math.ceil(this.allDomainList.length / this.perPage);
     },
@@ -58,7 +95,7 @@ export default {
 };
 </script>
 
-<style lang="stylus" scoped>
+<style scoped>
 .pagination {
   display: flex;
   justify-content: center;

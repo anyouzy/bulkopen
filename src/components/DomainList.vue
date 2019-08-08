@@ -1,30 +1,28 @@
+<!--
+ * @Author: Tiger Zhang
+ * @LastEditors: Tiger Zhang
+ * @Date: 2019-08-08 19:06:15
+ * @LastEditTime: 2019-08-08 22:58:30
+ * @Description: 
+ -->
 <template>
-  <section class="domain-list" v-if="allDomainList.length > 0">
+  <section class="domain-list" v-if="currentPageDomainList.length > 0">
     <div class="select-control">
-      <button
-        class="btn btn-select"
-        @click="selectAll"
-        :class="{'btn-disabled':selectedIndexes.length === showDomainIndexes.length}"
-      >全选</button>
-      <button @click="bulkOpen" class="btn btn-open">批量打开</button>
-      <button @click="removeAll" class="btn btn-remove">全部删除</button>
+      <button class="btn btn-select">全选</button>
+      <button class="btn btn-open">批量打开</button>
+      <button class="btn btn-remove">全部删除</button>
     </div>
     <ul class="domain-list-ul">
-      <li class="domain-list-li" v-for="domainIndex in showDomainIndexes" :key="domainIndex">
+      <li class="domain-list-li" v-for="(domain,index) in currentPageDomainList" :key="domain">
         <span class="flex-2">
-          <input type="checkbox" v-model="selectedIndexes" :value="domainIndex" />
-          {{ allDomainList[domainIndex] }}
+          <input type="checkbox" v-model="opList[index]" />
+          {{ domain }}
         </span>
-        <input
-          class="flex-3"
-          type="text"
-          v-model="opList[domainIndex]"
-          :value="opList[domainIndex]"
-        />
+        <input class="flex-3" type="text" v-model="opList[index]" />
         <a
           href="javascript:void(0)"
-          @click="removeDomain(domainIndex)"
           class="flex-1 remove-domain"
+          @click="removeDomain(domain)"
         >移除该域名</a>
       </li>
     </ul>
@@ -32,10 +30,30 @@
 </template>
 
 <script>
-export default {};
+import { mapState } from "vuex";
+export default {
+  data() {
+    return {};
+  },
+  methods: {
+    removeDomain(domain) {
+      let confirmRemove = confirm(`确定删除${domain}吗?`);
+      if (!confirmRemove) return;
+      
+    }
+  },
+
+  mounted() {},
+  computed: {
+    ...mapState(["currentPageDomainList"]),
+    opList() {
+      return this.currentPageDomainList.map(domain => `site:${domain}`);
+    }
+  }
+};
 </script>
 
-<style lang="stylus" scoped>
+<style scoped>
 .domain-list {
   padding: 20px 0;
 }

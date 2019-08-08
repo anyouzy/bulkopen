@@ -1,3 +1,10 @@
+<!--
+ * @Author: Tiger Zhang
+ * @LastEditors: Tiger Zhang
+ * @Date: 2019-08-08 19:06:15
+ * @LastEditTime: 2019-08-08 21:36:23
+ * @Description: 
+ -->
 <template>
   <section class="add-domain-box">
     <textarea
@@ -39,6 +46,7 @@ export default {
       this.shouldActiveBorder = true;
       this.shouldBtnDisabled = false;
     },
+
     addDomain() {
       if (this.isAdding) return;
       let tmpInput = this.inputDomain.trim().toLowerCase();
@@ -55,17 +63,17 @@ export default {
         return;
       }
       let addDomainList = inputDomainList.filter(
-        domain => !this.allDomainList.includes(domain)
+        domain => !this.$store.state.allDomainList.includes(domain)
       );
-      this.allDomainList = [...this.allDomainList, ...addDomainList];
-      localStorage.setItem("domainList", JSON.stringify(this.allDomainList));
+     
+      this.$store.dispatch("addDomain", addDomainList);
       this.isAdding = false;
     }
   }
 };
 </script>
 
-<style lang="stylus" scoped>
+<style scoped>
 .input-hint-box {
   display: flex;
   justify-content: space-between;
