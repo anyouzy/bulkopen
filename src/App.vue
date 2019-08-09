@@ -59,6 +59,17 @@ textarea {
   outline: none;
 }
 
+.btn {
+  cursor: pointer;
+  border: none;
+  border-radius: 2px;
+  color: #fff;
+  display: inline-block;
+  padding: 6px 16px;
+  text-align: center;
+  margin-right: 10px;
+}
+
 .flex-1 {
   flex: 1;
 }

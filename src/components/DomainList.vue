@@ -39,7 +39,6 @@ export default {
     removeDomain(domain) {
       let confirmRemove = confirm(`确定删除${domain}吗?`);
       if (!confirmRemove) return;
-      
     }
   },
 
