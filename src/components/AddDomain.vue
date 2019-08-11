@@ -2,7 +2,7 @@
  * @Author: Tiger Zhang
  * @LastEditors: Tiger Zhang
  * @Date: 2019-08-08 19:06:15
- * @LastEditTime: 2019-08-08 21:36:23
+ * @LastEditTime: 2019-08-11 18:10:47
  * @Description: 
  -->
 <template>
@@ -12,29 +12,48 @@
       cols="60"
       rows="6"
       @focusout="changeTextAreaStyle"
-      :class="{'inactive-textarea-border':!shouldActiveBorder,'active-textarea-border':shouldActiveBorder}"
-      @focus="shouldBtnDisabled=false; shouldActiveBorder=true;"
+      :class="{
+        'inactive-textarea-border': !shouldActiveBorder,
+        'active-textarea-border': shouldActiveBorder
+      }"
+      @focus="
+        shouldBtnDisabled = false;
+        shouldActiveBorder = true;
+      "
     ></textarea>
     <div class="input-hint-box">
       <span>请输入要新增的域名，一行一个，输入完成后点击添加按钮</span>
       <button
         @click="addDomain"
         class="btn btn-add-domain"
-        :class="{'btn-disabled':shouldBtnDisabled}"
-      >添加</button>
+        :class="{ 'btn-disabled': shouldBtnDisabled }"
+      >
+        添加
+      </button>
     </div>
   </section>
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
   data() {
     return {
       shouldBtnDisabled: true,
       shouldActiveBorder: false,
       inputDomain: "",
-      isAdding: false
+      isAdding: false,
+      addDomainList: [],
+      fillDomains: []
     };
+  },
+  computed: {
+    ...mapState([
+      "allDomainList",
+      "currentPageDomainList",
+      "currentPageLeftSpaces",
+      "nextPageFirstDomain"
+    ])
   },
   methods: {
     changeTextAreaStyle() {
@@ -46,7 +65,32 @@ export default {
       this.shouldActiveBorder = true;
       this.shouldBtnDisabled = false;
     },
+    updateNextPageFirstDomain() {
+      if ("" !== this.nextPageFirstDomain) return;
+      if (this.addDomainList.length <= this.currentPageLeftSpaces) return;
 
+      let nextPageFirstDomain = this.currentPageLeftSpaces
+        ? this.addDomainList[this.fillDomains.length]
+        : this.addDomainList[0];
+      this.$store.commit("updateNextPageFirstDomain", nextPageFirstDomain);
+    },
+    updateLeftSpaces() {
+      if (0 === this.currentPageLeftSpaces) return;
+      let leftSpaces = this.currentPageLeftSpaces - this.fillDomains.length;
+      this.$store.commit("updatecurrentPageLeftSpaces", leftSpaces);
+    },
+    fillCurrentPageDomainList() {
+      if (!this.currentPageLeftSpaces) return;
+      this.fillDomains =
+        this.addDomainList.length > this.currentPageLeftSpaces
+          ? this.addDomainList.slice(0, this.currentPageLeftSpaces)
+          : this.addDomainList;
+
+      this.$store.commit("updateCurrentPageDomains", [
+        ...this.currentPageDomainList,
+        ...this.fillDomains
+      ]);
+    },
     addDomain() {
       if (this.isAdding) return;
       let tmpInput = this.inputDomain.trim().toLowerCase();
@@ -62,11 +106,13 @@ export default {
         this.isAdding = false;
         return;
       }
-      let addDomainList = inputDomainList.filter(
-        domain => !this.$store.state.allDomainList.includes(domain)
+      this.addDomainList = inputDomainList.filter(
+        domain => !this.allDomainList.includes(domain)
       );
-     
-      this.$store.dispatch("addDomain", addDomainList);
+      this.$store.commit("addDomain", this.addDomainList);
+      this.fillCurrentPageDomainList();
+      this.updateNextPageFirstDomain();
+      this.updateLeftSpaces();
       this.isAdding = false;
     }
   }
