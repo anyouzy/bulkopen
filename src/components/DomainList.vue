@@ -12,33 +12,22 @@
         class="btn btn-select"
         @click="selectAll"
         :class="{ 'btn-disabled': hasSelectedAll }"
-      >
-        全选
-      </button>
+      >全选</button>
       <button class="btn btn-open" @click="bulkOpen">批量打开</button>
       <button class="btn btn-remove" @click="removeAll">全部删除</button>
     </div>
     <ul class="domain-list-ul">
-      <li
-        class="domain-list-li"
-        v-for="(domain, index) in currentPageDomainList"
-        :key="domain"
-      >
+      <li class="domain-list-li" v-for="(domain, index) in currentPageDomainList" :key="domain">
         <span class="flex-2">
-          <input
-            type="checkbox"
-            v-model="selectedStats[index]"
-            @change="updateHasChangedPage"
-          />
+          <input type="checkbox" v-model="selectedStats[index]" @change="updateHasChangedPage" />
           {{ domain }}
         </span>
         <input class="flex-3" type="text" v-model="opList[index]" />
         <a
           href="javascript:void(0)"
           class="flex-1 remove-domain"
-          @click="removeDomain(domain)"
-          >移除该域名</a
-        >
+          @click="removeDomain(domain,index)"
+        >移除该域名</a>
       </li>
     </ul>
   </section>
@@ -59,7 +48,7 @@ export default {
     }
   },
   methods: {
-    removeDomain(domain) {
+    removeDomain(domain, index) {
       let confirmRemove = confirm(`确定删除${domain}吗?`);
       if (!confirmRemove) return;
       let remainDomains = this.currentPageDomainList.filter(v => v !== domain);
@@ -70,9 +59,9 @@ export default {
       this.$store.commit("removeDomain", domain);
       this.$store.commit("updateCurrentPageDomains", tmpArr);
 
-      let index = this.allDomainList.indexOf(this.nextPageFirstDomain) + 1;
+      let tmpIndex = this.allDomainList.indexOf(this.nextPageFirstDomain) + 1;
       let tmpStr =
-        this.nextPageFirstDomain === "" ? "" : this.allDomainList[index];
+        this.nextPageFirstDomain === "" ? "" : this.allDomainList[tmpIndex];
       this.$store.commit("updateNextPageFirstDomain", tmpStr);
 
       this.$store.commit(

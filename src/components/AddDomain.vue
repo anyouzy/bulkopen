@@ -27,9 +27,7 @@
         @click="addDomain"
         class="btn btn-add-domain"
         :class="{ 'btn-disabled': shouldBtnDisabled }"
-      >
-        添加
-      </button>
+      >添加</button>
     </div>
   </section>
 </template>

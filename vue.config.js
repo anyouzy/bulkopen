@@ -8,10 +8,10 @@
 module.exports = {
   publicPath: "./",
   productionSourceMap: false,
-  configureWebpack:{
-    externals:{
-      'vue':'Vue',
-      'vuex':'Vuex'
+  configureWebpack: {
+    externals: {
+      vue: "Vue",
+      vuex: "Vuex"
     }
   }
 };

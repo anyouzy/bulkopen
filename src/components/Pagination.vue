@@ -6,37 +6,18 @@
  * @Description: 
  -->
 <template>
-  <section
-    class="pagination"
-    v-if="allDomainList.length > 0"
-    @click="changePage($event)"
-  >
-    <a :data-page="prevPage" href="javascript:void(0)" v-show="currentPage > 1"
-      >上一页</a
-    >
-    <a href="javascript:void(0);" v-show="!showPages.includes(1)" data-page="1"
-      >首页</a
-    >
+  <section class="pagination" v-if="allDomainList.length > 0" @click="changePage($event)">
+    <a :data-page="prevPage" href="javascript:void(0)" v-show="currentPage > 1">上一页</a>
+    <a href="javascript:void(0);" v-show="!showPages.includes(1)" data-page="1">首页</a>
     <a
       href="javascript:void(0);"
       :class="{ 'current-page': page === currentPage }"
       v-for="page in showPages"
       :data-page="page"
       :key="page"
-      >{{ page }}</a
-    >
-    <a
-      href="javascript:void(0);"
-      v-show="!showPages.includes(totalPage)"
-      :data-page="totalPage"
-      >尾页</a
-    >
-    <a
-      :data-page="nextPage"
-      href="javascript:void(0)"
-      v-show="currentPage < totalPage"
-      >下一页</a
-    >
+    >{{ page }}</a>
+    <a href="javascript:void(0);" v-show="!showPages.includes(totalPage)" :data-page="totalPage">尾页</a>
+    <a :data-page="nextPage" href="javascript:void(0)" v-show="currentPage < totalPage">下一页</a>
   </section>
 </template>
 
@@ -46,7 +27,7 @@ export default {
   data() {
     return {
       currentPage: 1,
-      perPage: 3, //默认情况下每页展示20条，可以自己修改
+      perPage: 20, //默认情况下每页展示20条，可以自己修改
       minDisplayPages: 5
     };
   },
@@ -80,14 +61,6 @@ export default {
     this.updateCurrentPageDomains();
     this.updateNextPageFirstDomain();
   },
-  /*  watch: {
-    currentPageDomainList(currentList) {
-      if (currentList.length !== 0) return;
-      this.currentPage = this.currentPage - 1;
-      this.updateCurrentPageDomains();
-      this.updateNextPageFirstDomain();
-    }
-  }, */
   computed: {
     ...mapState(["allDomainList", "currentPageDomainList"]),
     currentPageDomainList() {
